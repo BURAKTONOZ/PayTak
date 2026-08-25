@@ -2,16 +2,15 @@ const { app, BrowserWindow, ipcMain, screen } = require('electron')
 const path = require('path')
 
 function createWindow () {
-  // Ekranın tam boyutlarını al
   const { width, height } = screen.getPrimaryDisplay().workAreaSize
 
   const win = new BrowserWindow({
     width: width,
     height: height,
-    transparent: true, // Şeffaf arka plan
-    frame: false,      // Çerçevesiz
-    alwaysOnTop: true, // Her zaman üstte
-    skipTaskbar: true, // Görev çubuğunda görünmesin (tam maskot hissi)
+    transparent: true, 
+    frame: false,      
+    alwaysOnTop: true, 
+    skipTaskbar: true, 
     resizable: false,
     webPreferences: {
       nodeIntegration: true,
