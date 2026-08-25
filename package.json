@@ -1,7 +1,7 @@
 {
-  "name": "paytak",
-  "productName": "PayTak Sanal Ordek",
-  "version": "1.0.1",
+  "name": "paytak-v2",
+  "productName": "PayTak Sanal Ordek Yeni",
+  "version": "2.0.0",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -12,9 +12,10 @@
     "electron-builder": "^24.9.1"
   },
   "build": {
-    "appId": "com.buraktonoz.paytak",
+    "appId": "com.buraktonoz.paytak.yeni",
     "win": {
-      "target": "portable"
+      "target": "portable",
+      "artifactName": "PayTak-Yeni-Surum.exe"
     }
   }
 }
