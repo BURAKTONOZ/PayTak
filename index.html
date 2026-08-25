@@ -17,41 +17,46 @@
         p { color: #22c7d9; text-align: center; max-width: 600px; line-height: 1.6; font-size: 20px; font-weight: bold; margin-bottom: 30px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
-        /* AKILLI WIDGET (POP-UP) SİSTEMİ */
+        /* AKILLI WIDGET ANA KUTUSU (Mini hap ve menüyü tutar) */
         #widget-container {
             position: absolute;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 50;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
         }
 
-        /* GENİŞLEYEN İÇ MENÜ (Açık Mod) */
+        /* HAVADA ASILI AÇILIR MENÜ (Artık alttaki hapı aşağı ittirmez!) */
         #expanded-menu {
-            display: none;
+            position: absolute;
+            bottom: 100%; /* Hapın tam üstünde başlar */
+            margin-bottom: 15px; /* Hap ile arasındaki boşluk */
+            left: 50%;
             background: rgba(0, 0, 0, 0.45);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 24px;
             padding: 20px;
+            display: grid;
             grid-template-columns: repeat(6, 1fr);
             gap: 12px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            
+            /* Animasyon başlangıç hali (Kapalı) */
             opacity: 0;
+            pointer-events: none;
+            transform: translateX(-50%) translateY(15px) scale(0.95);
             transition: opacity 0.3s ease, transform 0.3s ease;
-            transform: translateY(20px) scale(0.95);
         }
+        
+        /* Menü Açık Hali */
         #expanded-menu.show {
-            display: grid;
             opacity: 1;
-            transform: translateY(0) scale(1);
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0) scale(1);
         }
 
-        /* MİNİMAL HAP KAPSÜL (Kapalı Mod) */
+        /* MİNİMAL HAP KAPSÜL (Sabit durur) */
         #mini-pill {
             background: rgba(0, 0, 0, 0.55);
             backdrop-filter: blur(15px);
@@ -62,7 +67,7 @@
             align-items: center;
             gap: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: box-shadow 0.2s;
         }
         #mini-pill:hover {
             box-shadow: 0 12px 30px rgba(0,0,0,0.6);
@@ -93,7 +98,7 @@
         #toggle-btn:active { transform: scale(0.95); }
 
         /* BUTONLAR (Izgara İçi) */
-        .action-btn { display: flex; justify-content: center; align-items: center; width: 45px; height: 45px; border-radius: 14px; cursor: pointer; font-size: 22px; transition: all 0.2s; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);}
+        .action-btn { display: flex; justify-content: center; align-items: center; width: 45px; height: 45px; border-radius: 14px; cursor: pointer; font-size: 22px; transition: all 0.2s; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); text-decoration: none; color: white;}
         .action-btn:hover { transform: scale(1.15) translateY(-5px); z-index: 10; background: rgba(255,255,255,0.25); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .action-btn:active { transform: scale(1.05); }
 
@@ -116,7 +121,7 @@
     <!-- AKILLI WIDGET -->
     <div id="widget-container">
         
-        <!-- AÇILAN MENÜ IZGARASI -->
+        <!-- HAVADA ASILI MENÜ IZGARASI -->
         <div id="expanded-menu">
             <div class="action-btn" onclick="spawnFood('🍔')" title="Hamburger">🍔</div>
             <div class="action-btn" onclick="spawnFood('🍟')" title="Patates">🍟</div>
@@ -128,10 +133,14 @@
             <div class="action-btn" onclick="spawnToy('cube')" title="Küp">📦</div>
             <div class="action-btn" onclick="petDuck()" title="Sev">❤️</div>
             <div class="action-btn" onclick="sleepDuck()" title="Uyut">💤</div>
+            
+            <!-- İNDİRME / GÜNCELLEME BUTONU -->
+            <a href="BURAYA_GITHUB_RAW_LINKINI_YAPISTIR" class="action-btn" title="Uygulamayı İndir / Güncelle">⬇️</a>
+            
             <div class="action-btn" id="btn-close" onclick="window.close()" style="background: rgba(231, 76, 60, 0.6);" title="Kapat">❌</div>
         </div>
 
-        <!-- MİNİMAL HAP (KAPALI DURUM) -->
+        <!-- MİNİMAL HAP (KAPALI DURUM - Sabit) -->
         <div id="mini-pill">
             <div class="drag-handle" title="Ekranın İstediğin Yerine Sürükle">⋮⋮</div>
             
@@ -179,13 +188,11 @@
         function toggleMenu() {
             isMenuOpen = !isMenuOpen;
             if(isMenuOpen) {
-                expandedMenu.style.display = 'grid';
-                setTimeout(() => expandedMenu.classList.add('show'), 10);
+                expandedMenu.classList.add('show');
                 toggleBtn.innerHTML = '🔽';
                 toggleBtn.style.background = 'rgba(255,255,255,0.3)';
             } else {
                 expandedMenu.classList.remove('show');
-                setTimeout(() => expandedMenu.style.display = 'none', 300);
                 toggleBtn.innerHTML = '🔼';
                 toggleBtn.style.background = 'rgba(255,255,255,0.1)';
             }
@@ -372,7 +379,7 @@
         }
 
         window.spawnFood = function(foodEmoji) {
-            closeMenuIfOpen(); // Menüyü kapatır
+            closeMenuIfOpen();
             if(foods.length > 5) { const old = foods.shift(); old.element.remove(); }
             const el = document.createElement('div'); el.innerText = foodEmoji; el.className = 'dropped-food'; 
             document.body.appendChild(el);
@@ -390,7 +397,7 @@
         }
 
         window.spawnToy = function(type) {
-            closeMenuIfOpen(); // Menüyü kapatır
+            closeMenuIfOpen();
             if(toys.length >= 3) { const oldToy = toys.shift(); scene.remove(oldToy.mesh); }
             let mesh = type === 'ball' ? 
                 new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 16), new THREE.MeshStandardMaterial({color: 0xe74c3c, roughness: 0.3})) : 
@@ -428,7 +435,7 @@
             }, 1000);
         }
 
-        // --- AKILLI FARE RADARI (Geçirgenlik İçin Optimize Edildi) ---
+        // --- AKILLI FARE RADARI ---
         let mouse3DPos = new THREE.Vector3(999, 0, 999);
         
         window.addEventListener('mousemove', (event) => {
@@ -437,7 +444,6 @@
             const intersects = raycaster.intersectObject(ground); if (intersects.length > 0) mouse3DPos.copy(intersects[0].point);
 
             if (isElectron) {
-                // Sadece yeni widget container ve diğer UI nesnelerini dikkate al
                 let isOverUI = !!(event.target.closest('#widget-container') || event.target.closest('.dropped-food') || event.target.closest('.emoji-effect') || event.target.closest('#ui-container'));
                 
                 let isOver3D = false;
