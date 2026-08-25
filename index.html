@@ -12,85 +12,111 @@
             user-select: none; color: white;
         }
         
-        #ui-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.6); z-index: 50; backdrop-filter: blur(5px); transition: opacity 0.5s; -webkit-app-region: drag;}
+        #ui-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.8); z-index: 100; backdrop-filter: blur(5px); transition: opacity 0.5s; }
         h1 { color: #f8fafc; margin-bottom: 10px; font-size: 36px; text-shadow: 0 0 20px rgba(79, 124, 255, 0.5); text-align: center;}
         p { color: #22c7d9; text-align: center; max-width: 600px; line-height: 1.6; font-size: 20px; font-weight: bold; margin-bottom: 30px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
-        /* Sol Üst İndirme Butonu (Sadece Web'de Görünür) */
-        #download-area { position: absolute; top: 20px; left: 20px; z-index: 60; text-align: center; }
-        .download-btn { background: linear-gradient(135deg, #4f7cff, #22c7d9); color: white; padding: 12px 24px; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 30px; box-shadow: 0 10px 25px rgba(34, 199, 217, 0.4); transition: transform 0.2s, box-shadow 0.2s; display: inline-block; border: 1px solid rgba(255,255,255,0.2); }
-        .download-btn:hover { transform: scale(1.05); box-shadow: 0 15px 30px rgba(34, 199, 217, 0.6); }
+        /* TEK MERKEZLİ KONTROL PANELİ */
+        #control-panel {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 15px 25px;
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
 
-        #status-ui { display: none; position: absolute; top: 20px; right: 20px; z-index: 10; flex-direction: column; gap: 15px; background: rgba(0, 0, 0, 0.4); padding: 20px; border-radius: 24px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); width: 220px; -webkit-app-region: no-drag;}
-        .bar-container { display: flex; flex-direction: column; gap: 6px; }
-        .bar-label { font-size: 15px; font-weight: bold; color: #f8fafc; display: flex; justify-content: space-between; text-shadow: 0 2px 4px rgba(0,0,0,0.5);}
-        .bar-bg { background: rgba(0,0,0,0.5); height: 14px; border-radius: 7px; overflow: hidden; position: relative; }
-        .bar-fill { height: 100%; border-radius: 7px; transition: width 0.4s ease, background 0.4s ease; box-shadow: 0 0 10px rgba(255,255,255,0.2) inset; }
+        #panel-header { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
         
-        #main-dock { display: none; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 20; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 30px; gap: 12px; align-items: flex-end; height: 60px; -webkit-app-region: no-drag;}
-        
-        .dock-item { display: flex; justify-content: center; align-items: center; width: 45px; height: 45px; border-radius: 14px; cursor: pointer; font-size: 22px; transition: all 0.2s; position: relative; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);}
-        .dock-item:hover { transform: scale(1.3) translateY(-10px); z-index: 10; background: rgba(255,255,255,0.25); }
-        .dock-item:active { transform: scale(1.1); }
-        .dock-divider { width: 2px; height: 35px; background: rgba(255,255,255,0.2); margin: 0 5px; align-self: center; border-radius: 2px; }
+        #drag-handle { 
+            cursor: grab; font-size: 20px; background: rgba(255, 255, 255, 0.1); 
+            padding: 8px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+        }
+        #drag-handle:active { cursor: grabbing; background: rgba(255, 255, 255, 0.2); }
+
+        /* DURUM BARLARI (Panelin İçi) */
+        #status-bars { display: flex; gap: 15px; flex-grow: 1; }
+        .bar-container { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+        .bar-label { font-size: 13px; font-weight: bold; color: #f8fafc; display: flex; justify-content: space-between; text-shadow: 0 2px 4px rgba(0,0,0,0.5);}
+        .bar-bg { background: rgba(0,0,0,0.6); height: 12px; border-radius: 6px; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); }
+        .bar-fill { height: 100%; border-radius: 6px; transition: width 0.4s ease, background 0.4s ease; box-shadow: 0 0 10px rgba(255,255,255,0.2) inset; }
+
+        /* DOCK (Alt Butonlar) */
+        #main-dock { display: flex; gap: 8px; align-items: center; justify-content: center; }
+        .dock-item { display: flex; justify-content: center; align-items: center; width: 42px; height: 42px; border-radius: 12px; cursor: pointer; font-size: 22px; transition: all 0.2s; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);}
+        .dock-item:hover { transform: scale(1.2) translateY(-5px); z-index: 10; background: rgba(255,255,255,0.25); }
+        .dock-item:active { transform: scale(1.05); }
+        .dock-divider { width: 2px; height: 35px; background: rgba(255,255,255,0.2); margin: 0 5px; border-radius: 2px; }
 
         .emoji-effect { position: absolute; font-size: 60px; pointer-events: none; z-index: 40; opacity: 1; transition: top 1.5s ease-out, opacity 1.5s ease-in; transform: translateX(-50%); filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); }
-        .dropped-food { position: absolute; font-size: 55px; pointer-events: none; z-index: 5; transform: translate(-50%, -50%); animation: dropIn 0.5s forwards; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8)); }
+        
+        .dropped-food { position: absolute; font-size: 50px; z-index: 5; transform: translate(-50%, -50%); animation: dropIn 0.5s forwards; filter: drop-shadow(0 8px 12px rgba(0,0,0,0.8)); cursor: grab; }
+        .dropped-food:active { cursor: grabbing; }
+
         @keyframes dropIn { 0% { top: -100px; transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <!-- Yükleme Ekranı -->
     <div id="ui-container">
         <h1>🦆 Sanal Bebek Yükleniyor</h1>
         <p id="loading-text">Lütfen Bekleyin ⏳</p>
     </div>
 
-    <!-- Web Sürümü İçin İndirme Butonu -->
-    <div id="download-area">
-        <!-- LİNKİ BURAYA YAPIŞTIRACAKSIN -->
-        <a href="BURAYA_GITHUB_RAW_LINKINI_YAPISTIR" class="download-btn" download>
-            💻 Masaüstü Sürümünü İndir (.exe)
-        </a>
-    </div>
+    <!-- YENİ BİRLEŞİK KONTROL PANELİ -->
+    <div id="control-panel">
+        <div id="panel-header">
+            <div id="drag-handle" title="Paneli Ekranın İstediğin Yerine Sürükle">🤚 Taşı</div>
+            <div id="status-bars">
+                <div class="bar-container">
+                    <div class="bar-label"><span>Açlık</span><span id="txt-hunger">100%</span></div>
+                    <div class="bar-bg"><div class="bar-fill" id="bar-hunger"></div></div>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-label"><span>Enerji</span><span id="txt-energy">100%</span></div>
+                    <div class="bar-bg"><div class="bar-fill" id="bar-energy"></div></div>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-label"><span>Mutluluk</span><span id="txt-happiness">100%</span></div>
+                    <div class="bar-bg"><div class="bar-fill" id="bar-happiness"></div></div>
+                </div>
+            </div>
+        </div>
 
-    <div id="status-ui">
-        <div class="bar-container">
-            <div class="bar-label"><span>Açlık</span><span id="txt-hunger">100%</span></div>
-            <div class="bar-bg"><div class="bar-fill" id="bar-hunger"></div></div>
+        <div id="main-dock">
+            <!-- Genişletilmiş Menü -->
+            <div class="dock-item" onclick="spawnFood('🍔')" title="Hamburger">🍔</div>
+            <div class="dock-item" onclick="spawnFood('🍟')" title="Patates">🍟</div>
+            <div class="dock-item" onclick="spawnFood('🥦')" title="Sebze">🥦</div>
+            <div class="dock-item" onclick="spawnFood('🍉')" title="Karpuz">🍉</div>
+            <div class="dock-item" onclick="spawnFood('🍦')" title="Dondurma">🍦</div>
+            <div class="dock-item" onclick="spawnFood('☕')" title="Türk Kahvesi (Turbo Enerji!)">☕</div>
+            <div class="dock-divider"></div>
+            <div class="dock-item" onclick="spawnToy('ball')" title="Top">⚽</div>
+            <div class="dock-item" onclick="spawnToy('cube')" title="Küp">📦</div>
+            <div class="dock-divider"></div>
+            <div class="dock-item" onclick="petDuck()" title="Sev">❤️</div>
+            <div class="dock-item" onclick="sleepDuck()" title="Uyut">💤</div>
+            <div class="dock-divider"></div>
+            <div class="dock-item" id="btn-close" onclick="window.close()" style="background: rgba(231, 76, 60, 0.6);" title="Kapat">❌</div>
         </div>
-        <div class="bar-container">
-            <div class="bar-label"><span>Enerji</span><span id="txt-energy">100%</span></div>
-            <div class="bar-bg"><div class="bar-fill" id="bar-energy"></div></div>
-        </div>
-        <div class="bar-container">
-            <div class="bar-label"><span>Mutluluk</span><span id="txt-happiness">100%</span></div>
-            <div class="bar-bg"><div class="bar-fill" id="bar-happiness"></div></div>
-        </div>
-    </div>
-
-    <div id="main-dock">
-        <!-- Taşıma butonu silindi, sadece işlevsel butonlar var -->
-        <div class="dock-item" onclick="spawnFood('🍔')">🍔</div>
-        <div class="dock-item" onclick="spawnFood('🍟')">🍟</div>
-        <div class="dock-item" onclick="spawnFood('🍎')">🍎</div>
-        <div class="dock-divider"></div>
-        <div class="dock-item" onclick="spawnToy('ball')">⚽</div>
-        <div class="dock-item" onclick="spawnToy('cube')">📦</div>
-        <div class="dock-divider"></div>
-        <div class="dock-item" onclick="petDuck()" title="Sev">❤️</div>
-        <div class="dock-item" onclick="sleepDuck()" title="Uyut">💤</div>
-        <div class="dock-divider"></div>
-        <div class="dock-item" id="btn-close" onclick="window.close()" style="background: rgba(231, 76, 60, 0.6);" title="Kapat">❌</div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 
     <script>
-        // --- İLETİŞİM SİSTEMİ (ELECTRON IPC) ---
+        // --- IPC (Görünmez Tıklama Ayarları) ---
         let ipcRenderer = null;
         let isElectron = false;
         let currentIgnoreState = true; 
@@ -100,14 +126,64 @@
             isElectron = true;
         } catch (e) {}
 
-        // Eğer masaüstü programındaysak indirme butonunu gizle
-        if (isElectron) {
-            document.getElementById('download-area').style.display = 'none';
-        } else {
-            // Webdeysek "Kapat (X)" butonunu gizle (Sekme kapatılarak çıkılır)
+        if (!isElectron) {
             document.getElementById('btn-close').style.display = 'none';
         }
 
+        // --- PANEL SÜRÜKLEME SİSTEMİ (Özel JS ile, webkit-drag kullanmadan) ---
+        const panel = document.getElementById('control-panel');
+        const handle = document.getElementById('drag-handle');
+        let isDraggingPanel = false;
+        let panelOffset = { x: 0, y: 0 };
+
+        handle.addEventListener('mousedown', (e) => {
+            isDraggingPanel = true;
+            // İlk taşımada transform'u silip sabit left/top değerine geçiyoruz
+            const rect = panel.getBoundingClientRect();
+            panel.style.transform = 'none';
+            panel.style.left = rect.left + 'px';
+            panel.style.top = rect.top + 'px';
+            
+            panelOffset.x = e.clientX - rect.left;
+            panelOffset.y = e.clientY - rect.top;
+        });
+
+        // --- YİYECEK SÜRÜKLEME (HAVADA YAKALAMA) SİSTEMİ ---
+        let draggedFood = null;
+
+        window.addEventListener('mousemove', (e) => {
+            // PANELİ TAŞIMA
+            if (isDraggingPanel) {
+                panel.style.left = (e.clientX - panelOffset.x) + 'px';
+                panel.style.top = (e.clientY - panelOffset.y) + 'px';
+            }
+            
+            // YEMEĞİ HAVADA SÜRÜKLEME
+            if (draggedFood) {
+                // Ekranda (2D) yerini güncelle
+                draggedFood.element.style.left = e.clientX + 'px';
+                draggedFood.element.style.top = e.clientY + 'px';
+                
+                // 3D Dünyadaki yerini de güncelle ki ördek takip etsin!
+                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObject(ground);
+                if (intersects.length > 0) {
+                    draggedFood.foodObj.position.copy(intersects[0].point);
+                }
+            }
+        });
+
+        window.addEventListener('mouseup', () => { 
+            isDraggingPanel = false; 
+            if (draggedFood) {
+                draggedFood.element.style.transform = 'translate(-50%, -50%) scale(1)';
+                draggedFood = null;
+            }
+        });
+
+        // --- DURUM BARLARI ---
         let stats = JSON.parse(localStorage.getItem('smartDuckStats')) || { hunger: 80, energy: 100, happiness: 80, weight: 1.0 };
         function saveStats() { localStorage.setItem('smartDuckStats', JSON.stringify(stats)); updateBars(); }
 
@@ -127,6 +203,7 @@
             saveStats();
         }, 2000);
 
+        // --- 3D SAHNE VE SINIRSIZ GENİŞLETİLMİŞ KAMERA ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.set(0, 4, 12); camera.lookAt(0, 2, 0);
@@ -141,7 +218,8 @@
         const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2); hemiLight.position.set(0, 20, 0); scene.add(hemiLight);
         const dirLight = new THREE.DirectionalLight(0xffffff, 1.0); dirLight.position.set(5, 10, 7); dirLight.castShadow = true; scene.add(dirLight);
 
-        const planeGeo = new THREE.PlaneGeometry(200, 200);
+        // Zemin sınırları devasa yapıldı (Tüm ekran)
+        const planeGeo = new THREE.PlaneGeometry(1000, 1000);
         const planeMat = new THREE.ShadowMaterial({ opacity: 0.4 }); 
         const ground = new THREE.Mesh(planeGeo, planeMat); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
 
@@ -152,7 +230,11 @@
         let currentAction;
         let duckState = 'idle'; 
         let targetPosition = new THREE.Vector3(0, 0, 0);
-        let walkSpeed = 2.5; let stateTimer = 2.0; 
+        
+        let normalWalkSpeed = 2.5; 
+        let walkSpeed = normalWalkSpeed; 
+        let stateTimer = 2.0; 
+        
         const raycaster = new THREE.Raycaster(); const mouse = new THREE.Vector2();
         
         const foods = []; const toys = []; let currentTargetToy = null;
@@ -167,7 +249,6 @@
         loader.load('duck_baby_-_animated_low_poly.glb', function(gltf) {
             const uiContainer = document.getElementById('ui-container');
             uiContainer.style.opacity = '0'; setTimeout(() => { uiContainer.style.display = 'none'; }, 500);
-            document.getElementById('status-ui').style.display = 'flex'; document.getElementById('main-dock').style.display = 'flex';
             updateBars();
 
             duckModel = gltf.scene; applyWeight(); 
@@ -207,7 +288,14 @@
         }
 
         function updateFoodElements() {
-            foods.forEach(food => { const pos = toScreenPosition(food.position); food.element.style.left = pos.x + 'px'; food.element.style.top = pos.y + 'px'; });
+            foods.forEach(food => { 
+                // Eğer yemek sürükleniyorsa 2D pozisyonunu güncelleme (Fare zaten güncelliyor)
+                if (draggedFood && draggedFood.foodObj === food) return;
+                
+                const pos = toScreenPosition(food.position); 
+                food.element.style.left = pos.x + 'px'; 
+                food.element.style.top = pos.y + 'px'; 
+            });
         }
 
         function getVisibleBounds() {
@@ -218,16 +306,25 @@
                 raycaster.setFromCamera(corner, camera); const target = new THREE.Vector3(); raycaster.ray.intersectPlane(plane, target);
                 if (target) { if (target.x < minX) minX = target.x; if (target.x > maxX) maxX = target.x; if (target.z < minZ) minZ = target.z; if (target.z > maxZ) maxZ = target.z; }
             });
-            if (minX === Infinity) return { xMin: -10, xMax: 10, zMin: -5, zMax: 10 };
+            if (minX === Infinity) return { xMin: -15, xMax: 15, zMin: -10, zMax: 15 }; // Genişletilmiş Varsayılan
             return { xMin: minX, xMax: maxX, zMin: minZ, zMax: maxZ };
         }
 
         window.spawnFood = function(foodEmoji) {
             if(foods.length > 5) { const old = foods.shift(); old.element.remove(); }
-            const el = document.createElement('div'); el.innerText = foodEmoji; el.className = 'dropped-food'; document.body.appendChild(el);
+            const el = document.createElement('div'); el.innerText = foodEmoji; el.className = 'dropped-food'; 
+            document.body.appendChild(el);
+            
+            // Yemek Sürükleme Event'i (Tıklandığında Yakala)
+            el.addEventListener('mousedown', (e) => {
+                draggedFood = { element: el, foodObj: foods.find(f => f.element === el) };
+                el.style.transform = 'translate(-50%, -50%) scale(1.3)'; // Sürüklerken büyüt
+            });
+
             const bounds = getVisibleBounds();
             const pos = new THREE.Vector3(bounds.xMin + Math.random() * (bounds.xMax - bounds.xMin), 0, bounds.zMin + Math.random() * (bounds.zMax - bounds.zMin));
             foods.push({ position: pos, element: el, type: foodEmoji });
+            
             if((duckState === 'idle' || duckState === 'wandering') && stats.hunger <= 80) duckState = 'wandering'; 
         }
 
@@ -276,12 +373,22 @@
             const intersects = raycaster.intersectObject(ground); if (intersects.length > 0) mouse3DPos.copy(intersects[0].point);
 
             if (isElectron) {
-                let isOverUI = !!(event.target.closest('#main-dock') || event.target.closest('#status-ui') || event.target.closest('.dropped-food') || event.target.closest('.emoji-effect'));
+                // UI panelinin üzerinde miyiz?
+                let isOverUI = !!(event.target.closest('#control-panel') || event.target.closest('.dropped-food') || event.target.closest('.emoji-effect'));
+                
+                // 3D Objenin Üzerinde miyiz?
                 let isOver3D = false;
-                if (duckWrapper && raycaster.intersectObject(duckWrapper, true).length > 0) isOver3D = true;
-                if (toys.length > 0 && raycaster.intersectObjects(toys.map(t => t.mesh)).length > 0) isOver3D = true;
+                if (!isOverUI) { // Panelin üzerinde değilsek 3D objelere bakalım (Optimizasyon)
+                    if (duckWrapper && raycaster.intersectObject(duckWrapper, true).length > 0) isOver3D = true;
+                    if (toys.length > 0 && raycaster.intersectObjects(toys.map(t => t.mesh)).length > 0) isOver3D = true;
+                }
 
-                const shouldIgnore = !(isOverUI || isOver3D);
+                // Ekranda Sürükleme Yapılıyor mu?
+                const isDraggingSomething = isDraggingPanel || draggedFood !== null;
+
+                // Eğer UI, 3D obje üzerinde değilsek VE bir şey sürüklemiyorsak = Geçirgenliği aç (Arkaya Tıkla)
+                const shouldIgnore = !(isOverUI || isOver3D || isDraggingSomething);
+                
                 if (shouldIgnore !== currentIgnoreState) {
                     currentIgnoreState = shouldIgnore;
                     ipcRenderer.send('set-ignore-mouse-events', shouldIgnore);
@@ -290,7 +397,7 @@
         });
 
         window.addEventListener('click', (event) => {
-            if (event.detail > 1 || event.target.closest('.dock-item') || event.target.closest('.download-btn')) return; 
+            if (event.detail > 1 || event.target.closest('.dock-item')) return; 
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1; mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
             raycaster.setFromCamera(mouse, camera);
             const toyIntersects = raycaster.intersectObjects(toys.map(t => t.mesh));
@@ -298,7 +405,7 @@
         });
 
         window.addEventListener('dblclick', (event) => {
-            if(!mixer || event.target.closest('.dock-item') || event.target.closest('.download-btn')) return;
+            if(!mixer || event.target.closest('.dock-item')) return;
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1; mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
             raycaster.setFromCamera(mouse, camera);
             
@@ -362,7 +469,7 @@
 
                 switch(duckState) {
                     case 'idle':
-                        playAnimation(anims.idle); walkSpeed = 2.5; stateTimer -= delta;
+                        playAnimation(anims.idle); walkSpeed = normalWalkSpeed; stateTimer -= delta;
                         if (stateTimer <= 0) {
                             if (foods.length > 0 && stats.hunger <= 80) { duckState = 'wandering'; } 
                             else if (toys.length > 0 && stats.happiness >= 50 && Math.random() < 0.4) {
@@ -393,14 +500,29 @@
                         } else {
                             if (duckState === 'chasing_food' && targetFoodIndex !== -1) {
                                 duckState = 'eating'; stateTimer = 2.5; playAnimation(anims.eat);
-                                const food = foods[targetFoodIndex]; food.element.remove(); foods.splice(targetFoodIndex, 1); targetFoodIndex = -1;
+                                
+                                const eatenFood = foods[targetFoodIndex];
+                                
+                                // ÖZEL TÜRK KAHVESİ MEKANİĞİ
+                                if (eatenFood.type === '☕') {
+                                    stats.energy = 100;
+                                    stats.happiness += 20;
+                                    walkSpeed = 6.0; // Kahve içince Turbo hız!
+                                    setTimeout(() => { walkSpeed = normalWalkSpeed; }, 10000); // 10 saniye sonra normale döner
+                                    create2DEffect('⚡');
+                                } else {
+                                    stats.hunger += 25;
+                                    stats.weight += 0.08;
+                                }
+
+                                eatenFood.element.remove(); foods.splice(targetFoodIndex, 1); targetFoodIndex = -1;
                             } else if (duckState !== 'chasing_toy') { duckState = 'idle'; stateTimer = 1 + Math.random() * 3; }
                         }
                         break;
                     case 'eating':
                         stateTimer -= delta;
                         if(stateTimer <= 0.5 && stateTimer + delta > 0.5) {
-                            create2DEffect('❤️'); create2DEffect('✨'); stats.hunger += 25; stats.weight += 0.08; applyWeight(); saveStats();
+                            create2DEffect('❤️'); create2DEffect('✨'); applyWeight(); saveStats();
                         }
                         if (stateTimer <= 0) { duckState = 'idle'; stateTimer = 1.0; } break;
                     case 'playing': case 'sleeping': case 'petting':
