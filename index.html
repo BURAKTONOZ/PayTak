@@ -136,11 +136,12 @@
         let isDraggingPanel = false;
         let panelOffset = { x: 0, y: 0 };
 
-        handle.addEventListener('mousedown', (e) => {
+       handle.addEventListener('mousedown', (e) => {
             isDraggingPanel = true;
             // İlk taşımada transform'u silip sabit left/top değerine geçiyoruz
             const rect = panel.getBoundingClientRect();
             panel.style.transform = 'none';
+            panel.style.bottom = 'auto'; // İŞTE BU YENİ SATIR ESNEMEYİ VE YAPIŞMAYI ÖNLER!
             panel.style.left = rect.left + 'px';
             panel.style.top = rect.top + 'px';
             
