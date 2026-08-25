@@ -5,63 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Akıllı Sanal Evcil Hayvan</title>
     <style>
-        /* Karanlık RGB Duman Efekti Arka Plan */
-        @keyframes smoke {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        /* MASAÜSTÜ İÇİN TAMAMEN ŞEFFAF ARKA PLAN */
         body { 
             margin: 0; overflow: hidden; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(-45deg, #080c14, #1a1a2e, #2c1b3d, #0f2027);
-            background-size: 400% 400%;
-            animation: smoke 20s ease infinite;
+            background: transparent !important;
             user-select: none; color: white;
         }
         
-        /* Otomatik Yükleme Ekranı */
-        #ui-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgba(8, 12, 20, 0.95); z-index: 50; backdrop-filter: blur(15px); transition: opacity 0.5s; }
+        #ui-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.6); z-index: 50; backdrop-filter: blur(5px); transition: opacity 0.5s; -webkit-app-region: drag;}
         h1 { color: #f8fafc; margin-bottom: 10px; font-size: 36px; text-shadow: 0 0 20px rgba(79, 124, 255, 0.5); text-align: center;}
         p { color: #22c7d9; text-align: center; max-width: 600px; line-height: 1.6; font-size: 20px; font-weight: bold; margin-bottom: 30px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
-        /* Sağ Üst Cam Görünümlü Durum Barları */
-        #status-ui { display: none; position: absolute; top: 20px; right: 20px; z-index: 10; flex-direction: column; gap: 15px; background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 24px; backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 220px; }
+        #status-ui { display: none; position: absolute; top: 20px; right: 20px; z-index: 10; flex-direction: column; gap: 15px; background: rgba(0, 0, 0, 0.4); padding: 20px; border-radius: 24px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); width: 220px; -webkit-app-region: no-drag;}
         .bar-container { display: flex; flex-direction: column; gap: 6px; }
         .bar-label { font-size: 15px; font-weight: bold; color: #f8fafc; display: flex; justify-content: space-between; text-shadow: 0 2px 4px rgba(0,0,0,0.5);}
-        .bar-bg { background: rgba(0,0,0,0.4); height: 14px; border-radius: 7px; overflow: hidden; position: relative; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); }
-        .bar-fill { height: 100%; border-radius: 7px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease; box-shadow: 0 0 10px rgba(255,255,255,0.2) inset; }
+        .bar-bg { background: rgba(0,0,0,0.5); height: 14px; border-radius: 7px; overflow: hidden; position: relative; }
+        .bar-fill { height: 100%; border-radius: 7px; transition: width 0.4s ease, background 0.4s ease; box-shadow: 0 0 10px rgba(255,255,255,0.2) inset; }
         
-        /* Tüm Kontrollerin Olduğu Ana Dock */
-        #main-dock { display: none; position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 20; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.15); padding: 12px 20px; border-radius: 30px; box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.5); gap: 12px; align-items: flex-end; height: 60px;}
-        
-        /* Ekrana Çift Tıklayınca Açılan Mini Menü */
-        #mini-dock { position: absolute; display: none; gap: 10px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); z-index: 30; transform: translate(-50%, -100%); margin-top: -15px; align-items: flex-end; height: 50px;}
+        #main-dock { display: none; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 20; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 30px; gap: 12px; align-items: flex-end; height: 60px; -webkit-app-region: no-drag;}
+        #mini-dock { position: absolute; display: none; gap: 10px; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 20px; z-index: 30; transform: translate(-50%, -100%); margin-top: -15px; align-items: flex-end; height: 50px; -webkit-app-region: no-drag;}
 
-        .dock-item { display: flex; justify-content: center; align-items: center; width: 50px; height: 50px; border-radius: 16px; cursor: pointer; font-size: 26px; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: bottom center; position: relative; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 20px rgba(0,0,0,0.4); background: linear-gradient(140deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05)); border: 1px solid rgba(255,255,255,0.15);}
-        .dock-item:hover { transform: scale(1.3) translateY(-10px); z-index: 10; background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.4);}
+        .dock-item { display: flex; justify-content: center; align-items: center; width: 45px; height: 45px; border-radius: 14px; cursor: pointer; font-size: 22px; transition: all 0.2s; position: relative; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);}
+        .dock-item:hover { transform: scale(1.3) translateY(-10px); z-index: 10; background: rgba(255,255,255,0.25); }
         .dock-item:active { transform: scale(1.1); }
-        .dock-divider { width: 2px; height: 40px; background: rgba(255,255,255,0.2); margin: 0 5px; align-self: center; border-radius: 2px; }
+        .dock-divider { width: 2px; height: 35px; background: rgba(255,255,255,0.2); margin: 0 5px; align-self: center; border-radius: 2px; }
 
-        /* Animasyonlar ve Emojiler */
-        .emoji-effect { position: absolute; font-size: 60px; pointer-events: none; z-index: 40; opacity: 1; transition: top 1.5s ease-out, opacity 1.5s ease-in; transform: translateX(-50%); filter: drop-shadow(0 0 10px rgba(0,0,0,0.3)); }
-        .dropped-food { position: absolute; font-size: 55px; pointer-events: none; z-index: 5; transform: translate(-50%, -50%); animation: dropIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6)); }
+        .drag-handle { cursor: grab; background: rgba(52, 152, 219, 0.4); -webkit-app-region: drag; }
+        .drag-handle:hover { transform: none; background: rgba(52, 152, 219, 0.6); }
+        
+        .emoji-effect { position: absolute; font-size: 60px; pointer-events: none; z-index: 40; opacity: 1; transition: top 1.5s ease-out, opacity 1.5s ease-in; transform: translateX(-50%); filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); }
+        .dropped-food { position: absolute; font-size: 55px; pointer-events: none; z-index: 5; transform: translate(-50%, -50%); animation: dropIn 0.5s forwards; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8)); }
         @keyframes dropIn { 0% { top: -100px; transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <!-- Yükleme Ekranı -->
     <div id="ui-container">
-        <h1>🦆 Sanal Bebek Dünyası</h1>
-        <p id="loading-text">3D Model ve Animasyonlar Yükleniyor... Lütfen Bekleyin ⏳</p>
+        <h1>🦆 Sanal Bebek Yükleniyor</h1>
+        <p id="loading-text">Lütfen Bekleyin ⏳</p>
     </div>
 
-    <!-- Durum Barları -->
     <div id="status-ui">
         <div class="bar-container">
-            <div class="bar-label"><span>Açlık (Tokluk)</span><span id="txt-hunger">100%</span></div>
+            <div class="bar-label"><span>Açlık</span><span id="txt-hunger">100%</span></div>
             <div class="bar-bg"><div class="bar-fill" id="bar-hunger"></div></div>
         </div>
         <div class="bar-container">
@@ -74,89 +62,68 @@
         </div>
     </div>
 
-    <!-- Ana Kontrol Dock'u (Rastgele atar) -->
     <div id="main-dock">
-        <div class="dock-item" onclick="spawnFood('🍔', true)" title="Hamburger">🍔</div>
-        <div class="dock-item" onclick="spawnFood('🍟', true)" title="Patates">🍟</div>
-        <div class="dock-item" onclick="spawnFood('🍗', true)" title="Tavuk">🍗</div>
-        <div class="dock-item" onclick="spawnFood('🍎', true)" title="Elma">🍎</div>
-        <div class="dock-item" onclick="spawnFood('🥦', true)" title="Sebze">🥦</div>
+        <!-- Pencereyi taşımak için özel tutamaç -->
+        <div class="dock-item drag-handle" title="Pencereyi Taşımak İçin Buradan Tut">✋</div>
         <div class="dock-divider"></div>
-        <div class="dock-item" onclick="spawnToy('ball', true)" title="Top">⚽</div>
-        <div class="dock-item" onclick="spawnToy('cube', true)" title="Küp">📦</div>
+        <div class="dock-item" onclick="spawnFood('🍔', true)">🍔</div>
+        <div class="dock-item" onclick="spawnFood('🍟', true)">🍟</div>
+        <div class="dock-item" onclick="spawnFood('🍎', true)">🍎</div>
+        <div class="dock-divider"></div>
+        <div class="dock-item" onclick="spawnToy('ball', true)">⚽</div>
+        <div class="dock-item" onclick="spawnToy('cube', true)">📦</div>
         <div class="dock-divider"></div>
         <div class="dock-item" onclick="petDuck()" title="Sev">❤️</div>
         <div class="dock-item" onclick="sleepDuck()" title="Uyut">💤</div>
+        <div class="dock-divider"></div>
+        <!-- Programı tamamen kapatmak için -->
+        <div class="dock-item" onclick="window.close()" style="background: rgba(231, 76, 60, 0.6);" title="Oyunu Kapat">❌</div>
     </div>
 
-    <!-- Tıklanan Yerde Açılan Mini Dock (Hedefe atar) -->
     <div id="mini-dock">
         <div class="dock-item" onclick="spawnFood('🍔', false)">🍔</div>
         <div class="dock-item" onclick="spawnFood('🍟', false)">🍟</div>
-        <div class="dock-item" onclick="spawnFood('🍗', false)">🍗</div>
         <div class="dock-item" onclick="spawnFood('🍎', false)">🍎</div>
-        <div class="dock-item" onclick="spawnFood('🥦', false)">🥦</div>
         <div class="dock-divider"></div>
         <div class="dock-item" onclick="spawnToy('ball', false)">⚽</div>
-        <div class="dock-item" onclick="spawnToy('cube', false)">📦</div>
-        <div class="dock-divider"></div>
-        <div class="dock-item" onclick="closeMiniDock()" style="font-size: 16px; background: rgba(231, 76, 60, 0.4);">❌</div>
+        <div class="dock-item" onclick="closeMiniDock()" style="font-size: 14px; background: rgba(231, 76, 60, 0.4);">❌</div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 
     <script>
-        // --- 1. KAYIT VE DURUM SİSTEMİ ---
-        let stats = JSON.parse(localStorage.getItem('smartDuckStats')) || {
-            hunger: 80, energy: 100, happiness: 80, weight: 1.0
-        };
+        let stats = JSON.parse(localStorage.getItem('smartDuckStats')) || { hunger: 80, energy: 100, happiness: 80, weight: 1.0 };
 
-        function saveStats() {
-            localStorage.setItem('smartDuckStats', JSON.stringify(stats));
-            updateBars();
-        }
+        function saveStats() { localStorage.setItem('smartDuckStats', JSON.stringify(stats)); updateBars(); }
 
         function updateBars() {
             const clamp = (val) => Math.max(0, Math.min(100, val));
-            stats.hunger = clamp(stats.hunger);
-            stats.energy = clamp(stats.energy);
-            stats.happiness = clamp(stats.happiness);
+            stats.hunger = clamp(stats.hunger); stats.energy = clamp(stats.energy); stats.happiness = clamp(stats.happiness);
 
-            const hBar = document.getElementById('bar-hunger');
-            hBar.style.width = stats.hunger + '%';
-            hBar.style.background = stats.hunger < 30 ? '#e74c3c' : stats.hunger < 70 ? '#f1c40f' : '#32d583';
+            document.getElementById('bar-hunger').style.width = stats.hunger + '%';
+            document.getElementById('bar-hunger').style.background = stats.hunger < 30 ? '#e74c3c' : '#32d583';
             document.getElementById('txt-hunger').innerText = Math.floor(stats.hunger) + '%';
 
-            const eBar = document.getElementById('bar-energy');
-            eBar.style.width = stats.energy + '%';
-            eBar.style.background = stats.energy < 30 ? '#e74c3c' : '#22c7d9';
+            document.getElementById('bar-energy').style.width = stats.energy + '%';
+            document.getElementById('bar-energy').style.background = stats.energy < 30 ? '#e74c3c' : '#22c7d9';
             document.getElementById('txt-energy').innerText = Math.floor(stats.energy) + '%';
 
-            const hpBar = document.getElementById('bar-happiness');
-            hpBar.style.width = stats.happiness + '%';
-            hpBar.style.background = stats.happiness < 40 ? '#e74c3c' : '#4f7cff';
+            document.getElementById('bar-happiness').style.width = stats.happiness + '%';
+            document.getElementById('bar-happiness').style.background = stats.happiness < 40 ? '#e74c3c' : '#4f7cff';
             document.getElementById('txt-happiness').innerText = Math.floor(stats.happiness) + '%';
         }
 
         setInterval(() => {
-            if (duckState !== 'sleeping') {
-                stats.hunger -= 0.6;
-                stats.energy -= 0.4;
-                stats.happiness -= 0.2;
-            } else {
-                stats.energy += 4.0; 
-                stats.hunger -= 0.1;
-            }
+            if (duckState !== 'sleeping') { stats.hunger -= 0.6; stats.energy -= 0.4; stats.happiness -= 0.2; } 
+            else { stats.energy += 4.0; stats.hunger -= 0.1; }
             if (stats.hunger < 30) stats.happiness -= 0.5;
             if (stats.energy <= 0 && duckState !== 'sleeping') sleepDuck();
             saveStats();
         }, 2000);
 
-
-        // --- 2. SAHNE, KAMERA VE AYDINLATMA ---
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x0f2027, 0.02);
+        // SİS KALDIRILDI (Tam şeffaflık için)
 
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.set(0, 4, 12); 
@@ -164,6 +131,7 @@
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0); // ARKAPLANI TAMAMEN GÖRÜNMEZ YAPAR
         renderer.shadowMap.enabled = true;
         renderer.outputEncoding = THREE.sRGBEncoding; 
         document.body.appendChild(renderer.domElement);
@@ -177,9 +145,6 @@
         dirLight.castShadow = true;
         scene.add(dirLight);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-        scene.add(ambientLight);
-
         const planeGeo = new THREE.PlaneGeometry(100, 100);
         const planeMat = new THREE.ShadowMaterial({ opacity: 0.4 }); 
         const ground = new THREE.Mesh(planeGeo, planeMat);
@@ -187,10 +152,8 @@
         ground.receiveShadow = true;
         scene.add(ground);
 
-        // --- 3. MODEL, FİZİK VE YAPAY ZEKA DEĞİŞKENLERİ ---
         let duckWrapper = new THREE.Group(); 
         scene.add(duckWrapper);
-        
         let duckModel;
         const BASE_SCALE = 4.5; 
         
@@ -215,13 +178,10 @@
             duckModel.scale.set(BASE_SCALE * stats.weight, BASE_SCALE, BASE_SCALE * stats.weight);
         }
 
-        // --- 4. OTOMATİK MODEL YÜKLEME (GitHub Pages Uyumlu) ---
         const loader = new THREE.GLTFLoader();
         const modelUrl = 'duck_baby_-_animated_low_poly.glb';
 
         loader.load(modelUrl, function(gltf) {
-            
-            // Yükleme ekranını gizle, barları ve menüyü aç
             const uiContainer = document.getElementById('ui-container');
             uiContainer.style.opacity = '0';
             setTimeout(() => { uiContainer.style.display = 'none'; }, 500);
@@ -232,10 +192,8 @@
 
             duckModel = gltf.scene;
             applyWeight(); 
-            
             duckModel.castShadow = true;
             duckModel.traverse(node => { if (node.isMesh) node.castShadow = true; });
-
             duckModel.rotation.y = 0; 
             duckWrapper.add(duckModel);
 
@@ -246,24 +204,16 @@
                     const clip = clips.find(c => c.name.toLowerCase().includes(name));
                     return clip ? mixer.clipAction(clip) : null;
                 };
-
                 anims.idle = findAnim('stand_idle') || findAnim('idle') || mixer.clipAction(clips[0]);
                 anims.walk = findAnim('walk') || findAnim('run') || anims.idle;
                 anims.eat = findAnim('sit_wash') || findAnim('eat') || anims.idle;
                 anims.sleep = findAnim('sleep') || findAnim('sit_idle') || anims.idle;
                 anims.happy = findAnim('jump') || findAnim('stand_special') || anims.idle;
 
-                [anims.eat, anims.sleep, anims.happy].forEach(a => {
-                    if(a) { a.setLoop(THREE.LoopOnce); a.clampWhenFinished = true; }
-                });
-
+                [anims.eat, anims.sleep, anims.happy].forEach(a => { if(a) { a.setLoop(THREE.LoopOnce); a.clampWhenFinished = true; } });
                 currentAction = anims.idle;
                 if(currentAction) currentAction.play();
             }
-        }, undefined, function(error) {
-            console.error("Model yüklenirken hata:", error);
-            document.getElementById('loading-text').innerText = "Hata! Model dosyası bulunamadı. Lütfen dosya adının tam olarak 'duck_baby_-_animated_low_poly.glb' olduğundan ve HTML ile aynı klasörde olduğundan emin olun.";
-            document.getElementById('loading-text').style.color = "#e74c3c";
         });
 
         function playAnimation(newAction, duration = 0.3) {
@@ -273,27 +223,19 @@
             currentAction = newAction;
         }
 
-        // --- 5. 2D EFEKTLER VE UI ---
         function toScreenPosition(vector3) {
             const vector = vector3.clone();
             vector.project(camera);
-            const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
-            const y = (vector.y * -0.5 + 0.5) * window.innerHeight;
-            return { x, y };
+            return { x: (vector.x * 0.5 + 0.5) * window.innerWidth, y: (vector.y * -0.5 + 0.5) * window.innerHeight };
         }
 
         function create2DEffect(emoji, customPos = null) {
             const el = document.createElement('div');
-            el.innerText = emoji;
-            el.className = 'emoji-effect';
-            
+            el.innerText = emoji; el.className = 'emoji-effect';
             let pos = customPos ? toScreenPosition(customPos) : toScreenPosition(duckWrapper.position);
             if(!customPos) pos.y -= 180; 
-            
-            el.style.left = (pos.x + (Math.random() * 60 - 30)) + 'px';
-            el.style.top = pos.y + 'px'; 
+            el.style.left = (pos.x + (Math.random() * 60 - 30)) + 'px'; el.style.top = pos.y + 'px'; 
             document.body.appendChild(el);
-
             setTimeout(() => { el.style.top = (pos.y - 200) + 'px'; el.style.opacity = 0; }, 50);
             setTimeout(() => el.remove(), 1500);
         }
@@ -301,8 +243,7 @@
         function updateFoodElements() {
             foods.forEach(food => {
                 const pos = toScreenPosition(food.position);
-                food.element.style.left = pos.x + 'px';
-                food.element.style.top = pos.y + 'px';
+                food.element.style.left = pos.x + 'px'; food.element.style.top = pos.y + 'px';
             });
         }
 
@@ -323,28 +264,19 @@
             return { xMin: minX, xMax: maxX, zMin: minZ, zMax: maxZ };
         }
 
-        // --- 6. KONTROLLER VE ETKİLEŞİM ---
         const miniDock = document.getElementById('mini-dock');
         window.closeMiniDock = function() { miniDock.style.display = 'none'; }
 
         window.spawnFood = function(foodEmoji, isRandom) {
             closeMiniDock();
-            if(foods.length > 5) {
-                const old = foods.shift();
-                old.element.remove();
-            }
-            const el = document.createElement('div');
-            el.innerText = foodEmoji;
-            el.className = 'dropped-food';
-            document.body.appendChild(el);
+            if(foods.length > 5) { const old = foods.shift(); old.element.remove(); }
+            const el = document.createElement('div'); el.innerText = foodEmoji; el.className = 'dropped-food'; document.body.appendChild(el);
             
             let pos = new THREE.Vector3();
             if(isRandom) {
                 const bounds = getVisibleBounds();
                 pos.set(bounds.xMin + Math.random() * (bounds.xMax - bounds.xMin), 0, bounds.zMin + Math.random() * (bounds.zMax - bounds.zMin));
-            } else {
-                pos.copy(miniDockTargetPos);
-            }
+            } else { pos.copy(miniDockTargetPos); }
 
             foods.push({ position: pos, element: el, type: foodEmoji });
             if((duckState === 'idle' || duckState === 'wandering') && stats.hunger <= 80) duckState = 'wandering'; 
@@ -352,136 +284,90 @@
 
         window.spawnToy = function(type, isRandom) {
             closeMiniDock();
-            if(toys.length >= 3) {
-                const oldToy = toys.shift();
-                scene.remove(oldToy.mesh);
-            }
+            if(toys.length >= 3) { const oldToy = toys.shift(); scene.remove(oldToy.mesh); }
             
-            let mesh;
-            if(type === 'ball') {
-                mesh = new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 16), new THREE.MeshStandardMaterial({color: 0xe74c3c, roughness: 0.3, metalness: 0.2}));
-            } else {
-                mesh = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.6), new THREE.MeshStandardMaterial({color: 0x3498db, roughness: 0.6}));
-            }
+            let mesh = type === 'ball' ? 
+                new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 16), new THREE.MeshStandardMaterial({color: 0xe74c3c, roughness: 0.3})) : 
+                new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.6), new THREE.MeshStandardMaterial({color: 0x3498db, roughness: 0.6}));
             
             let pos = new THREE.Vector3();
             if(isRandom) {
                 const bounds = getVisibleBounds();
                 pos.set(bounds.xMin + Math.random() * (bounds.xMax - bounds.xMin), 3, bounds.zMin + Math.random() * (bounds.zMax - bounds.zMin));
-            } else {
-                pos.copy(miniDockTargetPos);
-                pos.y = 3;
-            }
+            } else { pos.copy(miniDockTargetPos); pos.y = 3; }
 
-            mesh.position.copy(pos);
-            mesh.castShadow = true;
-            mesh.receiveShadow = true;
-            scene.add(mesh);
+            mesh.position.copy(pos); mesh.castShadow = true; mesh.receiveShadow = true; scene.add(mesh);
             toys.push({ mesh: mesh, velocity: new THREE.Vector3(0, 0, 0), type: type, lifetime: 20.0 });
         }
 
         function bounceToy(toyMesh) {
             const toy = toys.find(t => t.mesh === toyMesh);
-            if(toy) {
-                toy.velocity.set((Math.random() - 0.5) * 0.4, 0.4, (Math.random() - 0.5) * 0.4);
-                create2DEffect('💨', toy.mesh.position);
-            }
+            if(toy) { toy.velocity.set((Math.random() - 0.5) * 0.4, 0.4, (Math.random() - 0.5) * 0.4); create2DEffect('💨', toy.mesh.position); }
         }
 
         function explodeToy(toyMesh) {
             const index = toys.findIndex(t => t.mesh === toyMesh);
             if(index > -1) {
                 create2DEffect('💥', toys[index].mesh.position);
-                scene.remove(toys[index].mesh);
-                toys.splice(index, 1);
-                if (currentTargetToy && currentTargetToy.mesh === toyMesh) {
-                    currentTargetToy = null;
-                    duckState = 'idle';
-                }
+                scene.remove(toys[index].mesh); toys.splice(index, 1);
+                if (currentTargetToy && currentTargetToy.mesh === toyMesh) { currentTargetToy = null; duckState = 'idle'; }
             }
         }
 
         window.petDuck = function() {
             if(!mixer) return;
-            duckState = 'petting';
-            stats.happiness += 25;
-            saveStats();
-            playAnimation(anims.happy);
+            duckState = 'petting'; stats.happiness += 25; saveStats(); playAnimation(anims.happy);
             for(let i=0; i<7; i++) setTimeout(() => create2DEffect('❤️'), i * 150);
             stateTimer = 2.5; 
         }
 
         window.sleepDuck = function() {
             if(!mixer) return;
-            duckState = 'sleeping';
-            playAnimation(anims.sleep);
-            stateTimer = 10.0; 
+            duckState = 'sleeping'; playAnimation(anims.sleep); stateTimer = 10.0; 
             let zzzCount = 0;
             const sleepInterval = setInterval(() => {
                 if(duckState !== 'sleeping') return clearInterval(sleepInterval);
-                create2DEffect('💤');
-                zzzCount++;
+                create2DEffect('💤'); zzzCount++;
                 if(zzzCount > 9) clearInterval(sleepInterval);
             }, 1000);
         }
 
-        // TIKLAMA (Single Click)
         window.addEventListener('click', (event) => {
             if (event.detail > 1 || event.target.closest('.dock-item')) return; 
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1; mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
             raycaster.setFromCamera(mouse, camera);
             
             const toyIntersects = raycaster.intersectObjects(toys.map(t => t.mesh));
-            if (toyIntersects.length > 0) {
-                bounceToy(toyIntersects[0].object);
-                return;
-            }
+            if (toyIntersects.length > 0) { bounceToy(toyIntersects[0].object); return; }
             closeMiniDock();
         });
 
-        // ÇİFT TIKLAMA (Double Click)
         window.addEventListener('dblclick', (event) => {
             if(!mixer || event.target.closest('.dock-item')) return;
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1; mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
             raycaster.setFromCamera(mouse, camera);
             
-            // 1. Ördeği Sev
             const duckIntersects = raycaster.intersectObject(duckWrapper, true);
-            if (duckIntersects.length > 0) {
-                window.petDuck();
-                return;
-            }
+            if (duckIntersects.length > 0) { window.petDuck(); return; }
 
-            // 2. Oyuncak Patlat
             const toyIntersects = raycaster.intersectObjects(toys.map(t => t.mesh));
-            if (toyIntersects.length > 0) {
-                explodeToy(toyIntersects[0].object);
-                return;
-            }
+            if (toyIntersects.length > 0) { explodeToy(toyIntersects[0].object); return; }
 
-            // 3. Yere tıklandıysa Mini Dock Aç
             const groundIntersects = raycaster.intersectObject(ground);
             if (groundIntersects.length > 0) {
                 miniDockTargetPos.copy(groundIntersects[0].point);
-                miniDock.style.left = event.clientX + 'px';
-                miniDock.style.top = event.clientY + 'px';
-                miniDock.style.display = 'flex';
+                miniDock.style.left = event.clientX + 'px'; miniDock.style.top = event.clientY + 'px'; miniDock.style.display = 'flex';
             }
         });
 
-        // FAREYİ ALGILAMA (AI)
         let mouse3DPos = new THREE.Vector3(999, 0, 999);
         window.addEventListener('mousemove', (event) => {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1; mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
             raycaster.setFromCamera(mouse, camera);
             const intersects = raycaster.intersectObject(ground);
             if (intersects.length > 0) mouse3DPos.copy(intersects[0].point);
         });
 
-        // --- 7. YAPAY ZEKA VE OYUN DÖNGÜSÜ ---
         const clock = new THREE.Clock();
         let targetFoodIndex = -1;
 
@@ -499,19 +385,13 @@
                 toy.lifetime -= delta;
                 if (toy.lifetime <= 0) {
                     create2DEffect('💨', toy.mesh.position);
-                    scene.remove(toy.mesh);
-                    toys.splice(i, 1);
-                    if (currentTargetToy && currentTargetToy.mesh === toy.mesh) {
-                        currentTargetToy = null;
-                        duckState = 'idle';
-                    }
+                    scene.remove(toy.mesh); toys.splice(i, 1);
+                    if (currentTargetToy && currentTargetToy.mesh === toy.mesh) { currentTargetToy = null; duckState = 'idle'; }
                     continue;
                 }
 
                 toy.mesh.position.add(toy.velocity);
-                toy.velocity.x *= 0.92; 
-                toy.velocity.z *= 0.92;
-
+                toy.velocity.x *= 0.92; toy.velocity.z *= 0.92;
                 const radius = toy.type === 'ball' ? 0.35 : 0.3;
                 if (toy.mesh.position.y > radius) toy.velocity.y -= 0.015; 
                 else { toy.mesh.position.y = radius; toy.velocity.y *= -0.5; }
@@ -525,27 +405,16 @@
                     const dist = duckWrapper.position.distanceTo(toy.mesh.position);
                     if (dist < 1.4) { 
                         const pushDir = new THREE.Vector3().subVectors(toy.mesh.position, duckWrapper.position).normalize();
-                        toy.velocity.x += pushDir.x * 0.05;
-                        toy.velocity.z += pushDir.z * 0.05;
-                        
+                        toy.velocity.x += pushDir.x * 0.05; toy.velocity.z += pushDir.z * 0.05;
                         if(duckState === 'chasing_toy' && currentTargetToy === toy) {
-                            duckState = 'playing';
-                            stateTimer = 1.5;
-                            playAnimation(anims.happy);
-                            toy.velocity.add(pushDir.multiplyScalar(0.2)); 
-                            toy.velocity.y += 0.2; 
-                            stats.happiness += 5;
-                            stats.energy -= 2;
-                            applyWeight();
-                            saveStats();
+                            duckState = 'playing'; stateTimer = 1.5; playAnimation(anims.happy);
+                            toy.velocity.add(pushDir.multiplyScalar(0.2)); toy.velocity.y += 0.2; 
+                            stats.happiness += 5; stats.energy -= 2; applyWeight(); saveStats();
                             create2DEffect('🎵', toy.mesh.position);
                         }
                     }
                 }
-                if (toy.type === 'ball') {
-                    toy.mesh.rotation.x += toy.velocity.z;
-                    toy.mesh.rotation.z -= toy.velocity.x;
-                }
+                if (toy.type === 'ball') { toy.mesh.rotation.x += toy.velocity.z; toy.mesh.rotation.z -= toy.velocity.x; }
             }
 
             if (duckWrapper && mixer) {
@@ -554,102 +423,61 @@
                     if (distToMouse < 4.0) { 
                         if (stats.happiness < 40) {
                             const escapeDir = new THREE.Vector3().subVectors(duckWrapper.position, mouse3DPos).normalize();
-                            targetPosition.copy(duckWrapper.position).add(escapeDir.multiplyScalar(5)); 
-                            walkSpeed = 4.0; 
-                            duckState = 'wandering';
+                            targetPosition.copy(duckWrapper.position).add(escapeDir.multiplyScalar(5)); walkSpeed = 4.0; duckState = 'wandering';
                         } else if (stats.happiness >= 70 && duckState !== 'chasing_food') {
-                            targetPosition.copy(mouse3DPos);
-                            walkSpeed = 2.0; 
-                            duckState = 'wandering';
+                            targetPosition.copy(mouse3DPos); walkSpeed = 2.0; duckState = 'wandering';
                         }
                     }
                 }
 
                 switch(duckState) {
                     case 'idle':
-                        playAnimation(anims.idle);
-                        walkSpeed = 2.5; 
-                        stateTimer -= delta;
+                        playAnimation(anims.idle); walkSpeed = 2.5; stateTimer -= delta;
                         if (stateTimer <= 0) {
-                            if (foods.length > 0 && stats.hunger <= 80) {
-                                duckState = 'wandering'; 
-                            } else if (toys.length > 0 && stats.happiness >= 50 && Math.random() < 0.4) {
-                                currentTargetToy = toys[Math.floor(Math.random() * toys.length)];
-                                duckState = 'chasing_toy';
+                            if (foods.length > 0 && stats.hunger <= 80) { duckState = 'wandering'; } 
+                            else if (toys.length > 0 && stats.happiness >= 50 && Math.random() < 0.4) {
+                                currentTargetToy = toys[Math.floor(Math.random() * toys.length)]; duckState = 'chasing_toy';
                             } else {
                                 targetPosition.set(bounds.xMin + Math.random() * (bounds.xMax - bounds.xMin), 0, bounds.zMin + Math.random() * (bounds.zMax - bounds.zMin));
                                 duckState = 'wandering';
                             }
                         }
                         break;
-
-                    case 'wandering':
-                    case 'chasing_food':
-                    case 'chasing_toy':
+                    case 'wandering': case 'chasing_food': case 'chasing_toy':
                         let currentTarget = targetPosition;
-                        
                         if (foods.length > 0 && stats.hunger <= 80) {
                             let closestDist = Infinity;
-                            foods.forEach((f, index) => {
-                                const dist = duckWrapper.position.distanceTo(f.position);
-                                if (dist < closestDist) { closestDist = dist; targetFoodIndex = index; }
-                            });
-                            currentTarget = foods[targetFoodIndex].position;
-                            duckState = 'chasing_food';
-                        } else if (duckState === 'chasing_food') {
-                            duckState = 'wandering';
-                        }
+                            foods.forEach((f, index) => { const dist = duckWrapper.position.distanceTo(f.position); if (dist < closestDist) { closestDist = dist; targetFoodIndex = index; } });
+                            currentTarget = foods[targetFoodIndex].position; duckState = 'chasing_food';
+                        } else if (duckState === 'chasing_food') { duckState = 'wandering'; }
 
-                        if (duckState === 'chasing_toy' && currentTargetToy) {
-                            currentTarget = currentTargetToy.mesh.position;
-                        }
+                        if (duckState === 'chasing_toy' && currentTargetToy) currentTarget = currentTargetToy.mesh.position;
 
                         const direction = new THREE.Vector3().subVectors(currentTarget, duckWrapper.position);
                         const distance = direction.length();
 
                         if (distance > 0.4) {
                             direction.normalize();
-                            const angle = Math.atan2(direction.x, direction.z);
-                            duckWrapper.rotation.y = angle; 
-
+                            duckWrapper.rotation.y = Math.atan2(direction.x, direction.z); 
                             duckWrapper.position.add(direction.multiplyScalar(walkSpeed * delta));
                             playAnimation(anims.walk);
-                            
-                            stats.energy -= 0.05 * delta;
-                            stats.weight -= 0.005 * delta;
-                            applyWeight();
+                            stats.energy -= 0.05 * delta; stats.weight -= 0.005 * delta; applyWeight();
                         } else {
                             if (duckState === 'chasing_food' && targetFoodIndex !== -1) {
-                                duckState = 'eating';
-                                stateTimer = 2.5; 
-                                playAnimation(anims.eat);
-                                
-                                const food = foods[targetFoodIndex];
-                                food.element.remove();
-                                foods.splice(targetFoodIndex, 1);
-                                targetFoodIndex = -1;
-                            } else if (duckState !== 'chasing_toy') { 
-                                duckState = 'idle';
-                                stateTimer = 1 + Math.random() * 3; 
-                            }
+                                duckState = 'eating'; stateTimer = 2.5; playAnimation(anims.eat);
+                                const food = foods[targetFoodIndex]; food.element.remove(); foods.splice(targetFoodIndex, 1); targetFoodIndex = -1;
+                            } else if (duckState !== 'chasing_toy') { duckState = 'idle'; stateTimer = 1 + Math.random() * 3; }
                         }
                         break;
-
                     case 'eating':
                         stateTimer -= delta;
                         if(stateTimer <= 0.5 && stateTimer + delta > 0.5) {
                             create2DEffect('❤️'); create2DEffect('✨');
-                            stats.hunger += 25;
-                            stats.weight += 0.08;
-                            applyWeight();
-                            saveStats();
+                            stats.hunger += 25; stats.weight += 0.08; applyWeight(); saveStats();
                         }
                         if (stateTimer <= 0) { duckState = 'idle'; stateTimer = 1.0; }
                         break;
-
-                    case 'playing':
-                    case 'sleeping':
-                    case 'petting':
+                    case 'playing': case 'sleeping': case 'petting':
                         stateTimer -= delta;
                         if (stateTimer <= 0) { duckState = 'idle'; stateTimer = 1.0; }
                         break;
@@ -657,7 +485,6 @@
             }
             renderer.render(scene, camera);
         }
-        
         animate();
 
         window.addEventListener('resize', () => {
