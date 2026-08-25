@@ -9,22 +9,22 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Kodu İndir
+      - name: Kodu Indir
         uses: actions/checkout@v4
 
       - name: Node.js Kur (Bulutta)
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
-      - name: Gerekli Paketleri Yükle
+      - name: Gerekli Paketleri Yukle
         run: npm install
 
-      - name: EXE Dosyasını Oluştur
+      - name: EXE Dosyasini Olustur
         run: npm run build
 
-      - name: EXE'yi İndirilebilir Yap
+      - name: EXE'yi Indirilebilir Yap
         uses: actions/upload-artifact@v4
         with:
-          name: Sanal-Ordek-Oyun
+          name: PayTak-Sanal-Ordek
           path: dist/*.exe
