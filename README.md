@@ -1,0 +1,2 @@
+# PayTak
+Sanal Bebek Uygulamasi
