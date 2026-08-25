@@ -1,6 +1,6 @@
 {
-  "name": "duckton",
-  "productName": "Sanal Ordek",
+  "name": "paytak",
+  "productName": "PayTak Sanal Ordek",
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
@@ -12,7 +12,7 @@
     "electron-builder": "^24.9.1"
   },
   "build": {
-    "appId": "com.duckton.app",
+    "appId": "com.buraktonoz.paytak",
     "win": {
       "target": "portable"
     }
