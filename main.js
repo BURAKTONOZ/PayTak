@@ -1,16 +1,16 @@
 const { app, BrowserWindow, ipcMain, screen } = require('electron')
-const path = require('path')
 
 function createWindow () {
-  const { width, height } = screen.getPrimaryDisplay().workAreaSize
+  // Ekranın tam çözünürlüğünü al (Uçtan uca, görev çubuğu dahil)
+  const { width, height } = screen.getPrimaryDisplay().size
 
   const win = new BrowserWindow({
     width: width,
     height: height,
-    transparent: true, 
-    frame: false,      
-    alwaysOnTop: true, 
-    skipTaskbar: true, 
+    transparent: true, // Şeffaf arka plan
+    frame: false,      // Çerçevesiz tasarım
+    alwaysOnTop: true, // Her zaman en üstte
+    skipTaskbar: true, // Alt görev çubuğunda simgesi gizli kalır
     resizable: false,
     webPreferences: {
       nodeIntegration: true,
@@ -18,12 +18,12 @@ function createWindow () {
     }
   })
 
-  // Başlangıçta tüm pencereyi tıklamalara karşı "Geçirgen" yap (Arkaya tıklansın)
+  // Başlangıçta tüm pencereyi tıklamalara karşı "Geçirgen" yap
   win.setIgnoreMouseEvents(true, { forward: true })
 
   win.loadFile('index.html')
 
-  // index.html'den gelen sinyale göre farenin geçirgenliğini aç/kapat
+  // HTML'den gelen sinyalle farenin arkaya tıklamasını aç/kapat
   ipcMain.on('set-ignore-mouse-events', (event, ignore) => {
     const webContents = event.sender
     const currentWin = BrowserWindow.fromWebContents(webContents)
